@@ -1,0 +1,16 @@
+# Ignore artifacts:
+build
+target
+iconfont
+font
+images
+scripts
+public
+webclient
+cdn
+cesium
+leaflet
+
+.npmrc
+
+# Ignore all HTML files:
