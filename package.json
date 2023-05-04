@@ -1,9 +1,9 @@
 {
   "name": "common-toolbox",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
-  "main": "src/index.js",
-  "module": "src/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
