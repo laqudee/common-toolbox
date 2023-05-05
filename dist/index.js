@@ -2,7 +2,13 @@
 
 var JSEncrypt = require('jsencrypt');
 var dayjs = require('dayjs');
+var Cookies = require('js-cookie');
 
+/**
+ * @description 生成加密函数的工厂函数
+ * @param {string} publicKey
+ * @returns {Function}
+ */
 function createEncrypter(publicKey) {
   try {
     if (!publicKey) throw new Error('`PUBLIC_KEY` 不能为空')
@@ -20,6 +26,7 @@ function createEncrypter(publicKey) {
 
 /**
  * @description 获取当前日期、星期数
+ * @returns {Object}
  */
 const getDateAndWeek = () => {
   const date = new Date();
@@ -36,79 +43,22 @@ const getDateAndWeek = () => {
   }
 };
 
-function isMobile(rule, value) {
-  if (!rule.required && !value) {
-    return true
-  }
-  const reg = /^1[34578][0-9]\d{8}$/;
-  return reg.test(value)
-}
-
-function isMobileAsync(rule, value, callback) {
-  const reg = /^1[34578][0-9]\d{8}$/;
-  const msg = '您输入的手机号不合法，请重新输入';
-
-  if (!rule.required && !value) callback();
-  const valid = reg.test(value);
-  if (valid) callback();
-  callback(new Error(rule.message || msg));
-}
-
-function isEmail(rule, value) {
-  if (!rule.required && !value) {
-    return true
-  }
-  const reg = /^([a-zA-Z0-9._-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
-  return reg.test(value)
-}
-
-function isEmailAsync(rule, value, callback) {
-  const reg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+\.([a-zA-Z0-9_-]+)/;
-  const msg = '您输入的邮箱地址不正确，请重新输入';
-
-  if (!rule.required && !value) callback();
-  const match = value.match(reg);
-  const valid = match && match[1].length > 1;
-  if (valid) callback();
-  callback(new Error(rule.message || msg));
-}
-
-// 姓名中文校验
-function isNameAsync(rule, value, callback) {
-  if (!rule.required && !value) {
-    callback();
-  }
-  let reg = /^[\u4e00-\u9fa5]{2,4}$/;
-  if (!reg.test(value)) {
-    callback(new Error('姓名不合法，请重新输入'));
-  }
-  callback();
-}
-
-var common = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  isEmail: isEmail,
-  isEmailAsync: isEmailAsync,
-  isMobile: isMobile,
-  isMobileAsync: isMobileAsync,
-  isNameAsync: isNameAsync
-});
-
 /**
  * @description 以1920底图为基准开发页面
+ * @returns
  */
 const setFontSize = () => {
   window.useRem = true;
   const baseSize = 16
-    ; (function (doc, win) {
-      setRem();
-      let resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
-        recalc = function () {
-          setRem();
-        };
-      if (!doc.addEventListener) return
-      win.addEventListener(resizeEvt, recalc, false);
-    })(document, window);
+  ;(function (doc, win) {
+    setRem();
+    let resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+      recalc = function () {
+        setRem();
+      };
+    if (!doc.addEventListener) return
+    win.addEventListener(resizeEvt, recalc, false);
+  })(document, window);
 
   function setRem() {
     // 当前页面宽度相对于 1920宽的缩放比例，可根据自己需要修改
@@ -121,6 +71,7 @@ const setFontSize = () => {
 
 /**
  * @description 设置全屏与关闭全屏
+ * @returns
  */
 const settingFullscreen = () => {
   // 判断是否全屏，全屏则退出，非全屏则全屏
@@ -154,6 +105,7 @@ const settingFullscreen = () => {
 
 /**
  * @description 绑定事件 on(element, event, handler)
+ * @returns
  */
 const on = (function () {
   if (document.addEventListener) {
@@ -175,7 +127,7 @@ const on = (function () {
  * @description 将base64转换为文件,接收2个参数，第一是base64，第二个是文件名字
  * @param {*} dataurl
  * @param {*} filename
- * @returns 文件对象
+ * @returns {File}
  */
 function dataURLtoFile(dataurl, filename) {
   var arr = dataurl.split(','),
@@ -192,10 +144,11 @@ function dataURLtoFile(dataurl, filename) {
 }
 
 /**
- *
+ * @description 下载指定格式与名称的文件
  * @param {*} url
  * @param {*} name
  * @param {*} type
+ * @returns
  */
 const blobFile = (url, name, type) => {
   let blob = new Blob([url], {
@@ -211,7 +164,161 @@ const blobFile = (url, name, type) => {
   window.URL.revokeObjectURL(href); // 释放掉blob对象
 };
 
+/**
+ * @description 获取localStorage中键名为key的值
+ * @param {string} key
+ * @returns {object | undefined}
+ */
+function getLocalStorage(key) {
+  return localStorage.getItem(key)
+}
+
+/**
+ * @description 通过参数key向localStorage中存储为键名为key的值
+ * @param {string} key
+ * @param {string | object} value
+ */
+function setLocalStorage(key, value) {
+  if (value && typeof value === 'object') {
+    localStorage.setItem(key, JSON.stringify(value));
+  } else {
+    localStorage.setItem(key, value);
+  }
+}
+
+/**
+ * @description 通过参数key从localStorage中删除键名为key的值
+ * @param {string} key
+ */
+function removeLocalStorage(key) {
+  if (localStorage.getItem(key)) {
+    localStorage.removeItem(key);
+  }
+}
+
+/**
+ * @description 清除localStorage
+ */
+function clearAllLocalStorage() {
+  localStorage.clear();
+}
+
+const config = {
+  cookieExpires: 7
+};
+
+/**
+ * @description 通过参数key获取名为key的cookie值
+ * @param {string} key
+ * @returns {string | undefined}
+ */
+function getCookie(key) {
+  if (Cookies.get(key)) {
+    return Cookies.get(key)
+  } else {
+    return ''
+  }
+}
+
+/**
+ * @description 通过参数key设置名为key的cookie值, 并设置cookie过期时间
+ * @param {string} key
+ * @param {string} value
+ * @param {number} expires
+ */
+function setCookie(key, value, expires) {
+  Cookies.set(key, value, { expires: expires || config.cookieExpires });
+}
+
+/**
+ * @description 通过参数key删除名为key的cookie
+ * @param {string} key
+ */
+function removeCookie(key) {
+  if (Cookies.get(key)) {
+    Cookies.remove(key);
+  }
+}
+
+/**
+ * @description 清除所有cookie
+ */
+function clearAllCookies() {
+  const cookies = Cookies.get();
+  for (let key in cookies) {
+    Cookies.remove(key);
+  }
+}
+
+/**
+ * @description 清除所有localStorage 和 cookies
+ */
+function clearAllStorage() {
+  clearAllCookies();
+  clearAllLocalStorage();
+}
+
+var index = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  clearAllCookies: clearAllCookies,
+  clearAllLocalStorage: clearAllLocalStorage,
+  clearAllStorage: clearAllStorage,
+  getCookie: getCookie,
+  getLocalStorage: getLocalStorage,
+  removeCookie: removeCookie,
+  removeLocalStorage: removeLocalStorage,
+  setCookie: setCookie,
+  setLocalStorage: setLocalStorage
+});
+
+/**
+ * @description 中国大陆手机号格式校验
+ * @param {string} value
+ * @returns {boolean}
+ */
+function isMobile(value) {
+  if (!value) {
+    return false
+  }
+  const reg = /^1[34578][0-9]\d{8}$/;
+  return reg.test(value)
+}
+
+/**
+ * @description 邮箱格式校验
+ * @param {string} value
+ * @returns {boolean}
+ */
+function isEmail(value) {
+  if (!value) {
+    return false
+  }
+  const reg = /^([a-zA-Z0-9._-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+  return reg.test(value)
+}
+
+/**
+ * @description 中文姓名格式校验
+ * @param {string} value
+ * @returns {boolean}
+ */
+function isNameAsync(value) {
+  if (!value) {
+    return false
+  }
+  const reg = /^[\u4e00-\u9fa5]{2,4}$/;
+  return reg.test(value)
+}
+
+var common = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  isEmail: isEmail,
+  isMobile: isMobile,
+  isNameAsync: isNameAsync
+});
+
 exports.blobFile = blobFile;
+exports.cookieAndStorage = index;
 exports.createEncrypter = createEncrypter;
 exports.dataURLtoFile = dataURLtoFile;
 exports.getDateAndWeek = getDateAndWeek;
