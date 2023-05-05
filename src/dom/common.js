@@ -1,5 +1,6 @@
 /**
  * @description 以1920底图为基准开发页面
+ * @returns
  */
 export const setFontSize = () => {
   window.useRem = true
@@ -25,6 +26,7 @@ export const setFontSize = () => {
 
 /**
  * @description 设置全屏与关闭全屏
+ * @returns
  */
 export const settingFullscreen = () => {
   // 判断是否全屏，全屏则退出，非全屏则全屏
@@ -58,6 +60,7 @@ export const settingFullscreen = () => {
 
 /**
  * @description 绑定事件 on(element, event, handler)
+ * @returns
  */
 export const on = (function () {
   if (document.addEventListener) {

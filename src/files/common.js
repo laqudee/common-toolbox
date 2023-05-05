@@ -2,7 +2,7 @@
  * @description 将base64转换为文件,接收2个参数，第一是base64，第二个是文件名字
  * @param {*} dataurl
  * @param {*} filename
- * @returns 文件对象
+ * @returns {File}
  */
 export function dataURLtoFile(dataurl, filename) {
   var arr = dataurl.split(','),
@@ -19,10 +19,11 @@ export function dataURLtoFile(dataurl, filename) {
 }
 
 /**
- *
+ * @description 下载指定格式与名称的文件
  * @param {*} url
  * @param {*} name
  * @param {*} type
+ * @returns
  */
 export const blobFile = (url, name, type) => {
   let blob = new Blob([url], {

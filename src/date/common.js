@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 
 /**
  * @description 获取当前日期、星期数
+ * @returns {Object}
  */
 export const getDateAndWeek = () => {
   const date = new Date()
