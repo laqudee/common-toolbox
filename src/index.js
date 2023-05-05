@@ -1,6 +1,7 @@
 import { createEncrypter } from './encrypt/common.js'
 import { getDateAndWeek } from './date/common.js'
 import { setFontSize, settingFullscreen, on, off } from './dom/common.js'
+import { sleep, getType } from './tools/common.js'
 import { getPdf } from './files/htmlToPdf.js'
 import * as fileHandler from './files/common.js'
 import * as nodeFileHandler from './files/nodeFileHandler.js'
@@ -15,6 +16,8 @@ export {
   settingFullscreen,
   on,
   off,
+  sleep,
+  getType,
   getPdf,
   fileHandler,
   nodeFileHandler,

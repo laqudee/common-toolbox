@@ -76,33 +76,33 @@ export function passwordComplexityValidate(value, messageTool) {
 
 /**
  * @description 是否是数字
- * @param {any} val
+ * @param {any} value
  * @returns {boolean}
  */
-export function isNumeric(val) {
-  return /^\d+(\.\d+)?$/.test(val)
+export function isNumeric(value) {
+  return /^\d+(\.\d+)?$/.test(value)
 }
 
 /**
  * @description 是否是NaN
- * @param {any} val
+ * @param {any} value
  * @returns {boolean}
  */
-export function isNaN(val) {
+export function isNaN(value) {
   if (Number.isNaN) {
-    return Number.isNaN(val)
+    return Number.isNaN(value)
   }
 
-  return val !== val
+  return value !== value
 }
 
 /**
  * @description 是否是日期
- * @param {Date} val
+ * @param {Date} value
  * @returns {boolean}
  */
-export function isDate(val) {
-  return getType(val) === 'Date' && !isNaN(val.getTime())
+export function isDate(value) {
+  return getType(value) === 'Date' && !isNaN(value.getTime())
 }
 
 /**

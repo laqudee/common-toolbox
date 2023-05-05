@@ -3,13 +3,14 @@ import JsPDF from 'jspdf'
 
 /**
  * @description 将指定div元素输出为pdf文件或者base64码
- * @param {string} type 1:下载 2:输出
+ * @param {string} ref div元素className
+ * @param {string} type file:下载 base64:输出
  * @param {string} title
  * @returns {Promise<string> | void}
  */
-export function getPdf(type, title) {
+export function getPdf(ref, type, title) {
   return new Promise((resolve, reject) => {
-    html2Canvas(document.querySelector('#pdfDom'), {
+    html2Canvas(document.querySelector(ref), {
       allowTaint: true,
       useCORS: true,
       dpi: window.devicePixelRatio * 4, // 将分辨率提高到特定的DPI 提高四倍
@@ -36,7 +37,7 @@ export function getPdf(type, title) {
           }
         }
       }
-      if (type === '1') {
+      if (type === 'file') {
         // 下载
         PDF.save(title + '.pdf')
       } else {

@@ -149,14 +149,33 @@ const off = (function () {
 })();
 
 /**
+ * @description 设置休眠时间
+ * @param {number} timeout
+ * @returns
+ */
+async function sleep(timeout) {
+  return new Promise((resolve) => setTimeout(resolve, timeout))
+}
+
+/**
+ * @description 获取数据类型
+ * @param {any} value
+ * @return "String","Object","Array"...
+ */
+function getType(value) {
+  return Object.prototype.toString.call(value).slice(8, -1)
+}
+
+/**
  * @description 将指定div元素输出为pdf文件或者base64码
- * @param {string} type 1:下载 2:输出
+ * @param {string} ref div元素className
+ * @param {string} type file:下载 base64:输出
  * @param {string} title
  * @returns {Promise<string> | void}
  */
-function getPdf(type, title) {
+function getPdf(ref, type, title) {
   return new Promise((resolve, reject) => {
-    html2Canvas(document.querySelector('#pdfDom'), {
+    html2Canvas(document.querySelector(ref), {
       allowTaint: true,
       useCORS: true,
       dpi: window.devicePixelRatio * 4, // 将分辨率提高到特定的DPI 提高四倍
@@ -183,7 +202,7 @@ function getPdf(type, title) {
           }
         }
       }
-      if (type === '1') {
+      if (type === 'file') {
         // 下载
         PDF.save(title + '.pdf');
       } else {
@@ -407,21 +426,6 @@ var index$1 = /*#__PURE__*/Object.freeze({
 });
 
 /**
- * @description 设置休眠时间
- * @param {number} timeout
- * @returns
- */
-
-/**
- * @description 获取数据类型
- * @param {any} value
- * @return "String","Object","Array"...
- */
-function getType(value) {
-  return Object.prototype.toString.call(value).slice(8, -1)
-}
-
-/**
  * @description 中国大陆手机号格式校验
  * @param {string} value
  * @returns {boolean}
@@ -497,33 +501,33 @@ function passwordComplexityValidate(value, messageTool) {
 
 /**
  * @description 是否是数字
- * @param {any} val
+ * @param {any} value
  * @returns {boolean}
  */
-function isNumeric(val) {
-  return /^\d+(\.\d+)?$/.test(val)
+function isNumeric(value) {
+  return /^\d+(\.\d+)?$/.test(value)
 }
 
 /**
  * @description 是否是NaN
- * @param {any} val
+ * @param {any} value
  * @returns {boolean}
  */
-function isNaN(val) {
+function isNaN(value) {
   if (Number.isNaN) {
-    return Number.isNaN(val)
+    return Number.isNaN(value)
   }
 
-  return val !== val
+  return value !== value
 }
 
 /**
  * @description 是否是日期
- * @param {Date} val
+ * @param {Date} value
  * @returns {boolean}
  */
-function isDate(val) {
-  return getType(val) === 'Date' && !isNaN(val.getTime())
+function isDate(value) {
+  return getType(value) === 'Date' && !isNaN(value.getTime())
 }
 
 /**
@@ -635,9 +639,11 @@ exports.createEncrypter = createEncrypter;
 exports.fileHandler = common$1;
 exports.getDateAndWeek = getDateAndWeek;
 exports.getPdf = getPdf;
+exports.getType = getType;
 exports.nodeFileHandler = nodeFileHandler;
 exports.off = off;
 exports.on = on;
 exports.setFontSize = setFontSize;
 exports.settingFullscreen = settingFullscreen;
+exports.sleep = sleep;
 exports.validator = common;
