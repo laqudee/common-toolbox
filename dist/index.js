@@ -2,6 +2,9 @@
 
 var JSEncrypt = require('jsencrypt');
 var dayjs = require('dayjs');
+var promises = require('fs/promises');
+var node_url = require('node:url');
+var fs = require('node:fs');
 var Cookies = require('js-cookie');
 
 /**
@@ -164,6 +167,69 @@ const blobFile = (url, name, type) => {
   window.URL.revokeObjectURL(href); // 释放掉blob对象
 };
 
+var common$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  blobFile: blobFile,
+  dataURLtoFile: dataURLtoFile
+});
+
+/**
+ * @description 判断文件是否存在
+ * @param {string | path} path
+ * @returns {boolean}
+ */
+const isFileExist = (path) => {
+  if (fs.existsSync(path)) {
+    return true
+  } else {
+    return false
+  }
+};
+
+/**
+ * @description 获取parentPath下的除了excludeRegex正则表达式包含的目录
+ * @param {string} parentPath
+ * @param {RegExp} excludeRegex
+ * @returns {Promise<string[]>}
+ */
+const getFolderExcludeSome = async (parentPath, excludeRegex) => {
+  try {
+    const folders = await promises.readdir(node_url.fileURLToPath(new node_url.URL(parentPath, (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (document.currentScript && document.currentScript.src || new URL('index.js', document.baseURI).href)))));
+    let resultFolders = [];
+    folders.forEach((folder) => {
+      if (!excludeRegex.test(folder)) {
+        resultFolders.push(folder);
+      }
+    });
+    return resultFolders
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+/**
+ * @description 判断参数name的目录是否存在
+ * @param {string} parentPath
+ * @param {RegExp} excludeRegex
+ * @param {string} name
+ * @returns {boolean}
+ */
+const hasFolder = async (parentPath, excludeRegex, name) => {
+  let projectList = [];
+  if (projectList.length === 0) {
+    projectList = await getFolderExcludeSome(parentPath, excludeRegex);
+  }
+  if (projectList.includes(name)) return true
+  return false
+};
+
+var nodeFsHandler = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  getFolderExcludeSome: getFolderExcludeSome,
+  hasFolder: hasFolder,
+  isFileExist: isFileExist
+});
+
 /**
  * @description 获取localStorage中键名为key的值
  * @param {string} key
@@ -317,11 +383,11 @@ var common = /*#__PURE__*/Object.freeze({
   isNameAsync: isNameAsync
 });
 
-exports.blobFile = blobFile;
 exports.cookieAndStorage = index;
 exports.createEncrypter = createEncrypter;
-exports.dataURLtoFile = dataURLtoFile;
+exports.fileHandler = common$1;
 exports.getDateAndWeek = getDateAndWeek;
+exports.nodeFileHandler = nodeFsHandler;
 exports.on = on;
 exports.setFontSize = setFontSize;
 exports.settingFullscreen = settingFullscreen;

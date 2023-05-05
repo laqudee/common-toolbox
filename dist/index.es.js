@@ -1,5 +1,8 @@
 import JSEncrypt from 'jsencrypt';
 import dayjs from 'dayjs';
+import { readdir } from 'fs/promises';
+import { fileURLToPath, URL } from 'node:url';
+import fs from 'node:fs';
 import Cookies from 'js-cookie';
 
 /**
@@ -162,6 +165,69 @@ const blobFile = (url, name, type) => {
   window.URL.revokeObjectURL(href); // 释放掉blob对象
 };
 
+var common$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  blobFile: blobFile,
+  dataURLtoFile: dataURLtoFile
+});
+
+/**
+ * @description 判断文件是否存在
+ * @param {string | path} path
+ * @returns {boolean}
+ */
+const isFileExist = (path) => {
+  if (fs.existsSync(path)) {
+    return true
+  } else {
+    return false
+  }
+};
+
+/**
+ * @description 获取parentPath下的除了excludeRegex正则表达式包含的目录
+ * @param {string} parentPath
+ * @param {RegExp} excludeRegex
+ * @returns {Promise<string[]>}
+ */
+const getFolderExcludeSome = async (parentPath, excludeRegex) => {
+  try {
+    const folders = await readdir(fileURLToPath(new URL(parentPath, import.meta.url)));
+    let resultFolders = [];
+    folders.forEach((folder) => {
+      if (!excludeRegex.test(folder)) {
+        resultFolders.push(folder);
+      }
+    });
+    return resultFolders
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+/**
+ * @description 判断参数name的目录是否存在
+ * @param {string} parentPath
+ * @param {RegExp} excludeRegex
+ * @param {string} name
+ * @returns {boolean}
+ */
+const hasFolder = async (parentPath, excludeRegex, name) => {
+  let projectList = [];
+  if (projectList.length === 0) {
+    projectList = await getFolderExcludeSome(parentPath, excludeRegex);
+  }
+  if (projectList.includes(name)) return true
+  return false
+};
+
+var nodeFsHandler = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  getFolderExcludeSome: getFolderExcludeSome,
+  hasFolder: hasFolder,
+  isFileExist: isFileExist
+});
+
 /**
  * @description 获取localStorage中键名为key的值
  * @param {string} key
@@ -315,4 +381,4 @@ var common = /*#__PURE__*/Object.freeze({
   isNameAsync: isNameAsync
 });
 
-export { blobFile, index as cookieAndStorage, createEncrypter, dataURLtoFile, getDateAndWeek, on, setFontSize, settingFullscreen, common as validator };
+export { index as cookieAndStorage, createEncrypter, common$1 as fileHandler, getDateAndWeek, nodeFsHandler as nodeFileHandler, on, setFontSize, settingFullscreen, common as validator };
