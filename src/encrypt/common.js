@@ -2,7 +2,7 @@ import JSEncrypt from 'jsencrypt'
 
 /**
  * @description 生成加密函数的工厂函数
- * @param {string} publicKey 
+ * @param {string} publicKey
  * @returns {Function}
  */
 export function createEncrypter(publicKey) {

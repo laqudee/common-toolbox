@@ -7,13 +7,19 @@
   "type": "module",
   "scripts": {
     "build": "rollup -c",
+    "format": "prettier --write src/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["toolbox", "utils", "library", "common"],
+  "keywords": [
+    "toolbox",
+    "utils",
+    "library",
+    "common"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/laqudee/common-toolbox.git"
-  }, 
+  },
   "homepage": "https://github.com/laqudee/common-toolbox#readme",
   "author": "laqudee",
   "license": "MIT",
@@ -22,8 +28,11 @@
     "js-cookie": "^3.0.1",
     "jsencrypt": "^3.2.1",
     "qs": "^6.11.1",
-    "rollup": "^3.18.0",
     "lodash": "^4.17.21",
     "dayjs": "^1.11.2"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.4",
+    "rollup": "^3.18.0"
   }
 }

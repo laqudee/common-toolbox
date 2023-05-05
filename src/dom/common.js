@@ -5,15 +5,15 @@
 export const setFontSize = () => {
   window.useRem = true
   const baseSize = 16
-    ; (function (doc, win) {
-      setRem()
-      let resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
-        recalc = function () {
-          setRem()
-        }
-      if (!doc.addEventListener) return
-      win.addEventListener(resizeEvt, recalc, false)
-    })(document, window)
+  ;(function (doc, win) {
+    setRem()
+    let resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+      recalc = function () {
+        setRem()
+      }
+    if (!doc.addEventListener) return
+    win.addEventListener(resizeEvt, recalc, false)
+  })(document, window)
 
   function setRem() {
     // 当前页面宽度相对于 1920宽的缩放比例，可根据自己需要修改
@@ -77,4 +77,3 @@ export const on = (function () {
     }
   }
 })()
-

@@ -1,6 +1,6 @@
 /**
  * @description 中国大陆手机号格式校验
- * @param {string} value 
+ * @param {string} value
  * @returns {boolean}
  */
 export function isMobile(value) {
@@ -13,7 +13,7 @@ export function isMobile(value) {
 
 /**
  * @description 邮箱格式校验
- * @param {string} value 
+ * @param {string} value
  * @returns {boolean}
  */
 export function isEmail(value) {
@@ -26,7 +26,7 @@ export function isEmail(value) {
 
 /**
  * @description 中文姓名格式校验
- * @param {string} value 
+ * @param {string} value
  * @returns {boolean}
  */
 export function isNameAsync(value) {
