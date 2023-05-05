@@ -1,5 +1,7 @@
 import JSEncrypt from 'jsencrypt';
 import dayjs from 'dayjs';
+import html2Canvas from 'html2canvas';
+import JsPDF from 'jspdf';
 import { readdir } from 'fs/promises';
 import { fileURLToPath, URL } from 'node:url';
 import fs from 'node:fs';
@@ -125,6 +127,73 @@ const on = (function () {
 })();
 
 /**
+ * @description 解绑事件 off(element, event, handler)
+ * @returns
+ */
+const off = (function () {
+  if (document.removeEventListener) {
+    return function (element, event, handler) {
+      if (element && event) {
+        element.removeEventListener(event, handler, false);
+      }
+    }
+  } else {
+    return function (element, event, handler) {
+      if (element && event) {
+        element.detachEvent('on' + event, handler);
+      }
+    }
+  }
+})();
+
+/**
+ * @description 将指定div元素输出为pdf文件或者base64码
+ * @param {string} type 1:下载 2:输出
+ * @param {string} title
+ * @returns {Promise<string> | void}
+ */
+function getPdf(type, title) {
+  return new Promise((resolve, reject) => {
+    html2Canvas(document.querySelector('#pdfDom'), {
+      allowTaint: true,
+      useCORS: true,
+      dpi: window.devicePixelRatio * 4, // 将分辨率提高到特定的DPI 提高四倍
+      scale: 4 // 按比例增加分辨率
+    }).then(function (canvas) {
+      let contentWidth = canvas.width;
+      let contentHeight = canvas.height;
+      let pageHeight = (contentWidth / 592.28) * 841.89;
+      let leftHeight = contentHeight;
+      let position = 0;
+      let imgWidth = 595.28;
+      let imgHeight = (592.28 / contentWidth) * contentHeight;
+      let pageData = canvas.toDataURL('image/jpeg', 1.0);
+      let PDF = new JsPDF('', 'pt', 'a4');
+      if (leftHeight < pageHeight) {
+        PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
+      } else {
+        while (leftHeight > 0) {
+          PDF.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight);
+          leftHeight -= pageHeight;
+          position -= 841.89;
+          if (leftHeight > 0) {
+            PDF.addPage();
+          }
+        }
+      }
+      if (type === '1') {
+        // 下载
+        PDF.save(title + '.pdf');
+      } else {
+        // 输出pdf的base64码
+        let pdfData = PDF.output('datauristring'); // 获取到base64码
+        resolve(pdfData);
+      }
+    });
+  })
+}
+
+/**
  * @description 将base64转换为文件,接收2个参数，第一是base64，第二个是文件名字
  * @param {*} dataurl
  * @param {*} filename
@@ -221,7 +290,7 @@ const hasFolder = async (parentPath, excludeRegex, name) => {
   return false
 };
 
-var nodeFsHandler = /*#__PURE__*/Object.freeze({
+var nodeFileHandler = /*#__PURE__*/Object.freeze({
   __proto__: null,
   getFolderExcludeSome: getFolderExcludeSome,
   hasFolder: hasFolder,
@@ -322,7 +391,7 @@ function clearAllStorage() {
   clearAllLocalStorage();
 }
 
-var index = /*#__PURE__*/Object.freeze({
+var index$1 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   clearAllCookies: clearAllCookies,
   clearAllLocalStorage: clearAllLocalStorage,
@@ -334,6 +403,21 @@ var index = /*#__PURE__*/Object.freeze({
   setCookie: setCookie,
   setLocalStorage: setLocalStorage
 });
+
+/**
+ * @description 设置休眠时间
+ * @param {number} timeout
+ * @returns
+ */
+
+/**
+ * @description 获取数据类型
+ * @param {any} value
+ * @return "String","Object","Array"...
+ */
+function getType(value) {
+  return Object.prototype.toString.call(value).slice(8, -1)
+}
 
 /**
  * @description 中国大陆手机号格式校验
@@ -366,7 +450,7 @@ function isEmail(value) {
  * @param {string} value
  * @returns {boolean}
  */
-function isNameAsync(value) {
+function isName(value) {
   if (!value) {
     return false
   }
@@ -374,11 +458,173 @@ function isNameAsync(value) {
   return reg.test(value)
 }
 
+/**
+ * @description 是否是身份证
+ * @param {string} value
+ * @returns {boolean}
+ */
+function isIdCard(value) {
+  if (!value) {
+    return false
+  }
+  const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+  return reg.test(value)
+}
+
+/**
+ * @description 检查密码的复杂程度
+ * @param {string} value
+ * @param {Object | Function} messageTool 类似Toast；ElMessage；Message；Alert
+ * @returns
+ */
+function passwordComplexityValidate(value, messageTool) {
+  const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9~!@#$%^&*]{8,16}$/;
+  if (value === '') {
+    messageTool('请输入密码');
+    return false
+  } else if (value.length > 16 || value.length < 8) {
+    messageTool('密码长度必须在8-16之间');
+    return false
+  } else if (!reg.test(value)) {
+    messageTool('密码必须包含大小写字母和数字的组合');
+    return false
+  } else {
+    return true
+  }
+}
+
+/**
+ * @description 是否是数字
+ * @param {any} val
+ * @returns {boolean}
+ */
+function isNumeric(val) {
+  return /^\d+(\.\d+)?$/.test(val)
+}
+
+/**
+ * @description 是否是NaN
+ * @param {any} val
+ * @returns {boolean}
+ */
+function isNaN(val) {
+  if (Number.isNaN) {
+    return Number.isNaN(val)
+  }
+
+  return val !== val
+}
+
+/**
+ * @description 是否是日期
+ * @param {Date} val
+ * @returns {boolean}
+ */
+function isDate(val) {
+  return getType(val) === 'Date' && !isNaN(val.getTime())
+}
+
+/**
+ * @description 是否是浏览器
+ * @returns {boolean}
+ */
+const inBrowser = typeof window !== 'undefined';
+
+/**
+ * @description 是否是安卓
+ * @returns {boolean}
+ */
+function isAndroid() {
+  return inBrowser ? /android/.test(navigator.userAgent.toLowerCase()) : false
+}
+
+/**
+ * @description 是否是IOS
+ * @returns {boolean}
+ */
+function isIOS() {
+  return inBrowser ? /ios|iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase()) : false
+}
+
 var common = /*#__PURE__*/Object.freeze({
   __proto__: null,
+  inBrowser: inBrowser,
+  isAndroid: isAndroid,
+  isDate: isDate,
   isEmail: isEmail,
+  isIOS: isIOS,
+  isIdCard: isIdCard,
   isMobile: isMobile,
-  isNameAsync: isNameAsync
+  isNaN: isNaN,
+  isName: isName,
+  isNumeric: isNumeric,
+  passwordComplexityValidate: passwordComplexityValidate
 });
 
-export { index as cookieAndStorage, createEncrypter, common$1 as fileHandler, getDateAndWeek, nodeFsHandler as nodeFileHandler, on, setFontSize, settingFullscreen, common as validator };
+/**
+ * @description 处理获取到的位置
+ * @param {Object} position
+ * @returns {Promise<Object>}
+ */
+const showPosition = (position) => {
+  let lat = position.coords.latitude; //纬度
+  let lng = position.coords.longitude; //经度
+  return new Promise((resolve, reject) => {
+    resolve({
+      longitude: lng,
+      latitude: lat
+    });
+  })
+};
+
+/**
+ * @description 展示定位失败原因
+ * @param {Object | Function} messageTool message通知工具，例如ElMessage；Toast；Alert； Message
+ * @param {Error | Object} error
+ */
+const showError = (messageTool, error) => {
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      messageTool('定位失败,用户拒绝请求地理定位');
+      break
+    case error.POSITION_UNAVAILABLE:
+      messageTool('定位失败,位置信息是不可用');
+      break
+    case error.TIMEOUT:
+      messageTool('定位失败,请求获取用户位置超时');
+      break
+    case error.UNKNOWN_ERROR:
+      messageTool('定位失败,定位系统失效');
+      break
+  }
+};
+
+/**
+ * @description 通过浏览器提供的功能获取定位
+ * @param {Object | Function} messageTool message通知工具，例如ElMessage；Toast；Alert； Message
+ * @returns {Promise<Object>}
+ */
+const getPositionByGeolocation = (messageTool) => {
+  if (navigator.geolocation) {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    })
+      .then((res) => {
+        showPosition(res).then((res) => {
+          return res
+        });
+      })
+      .catch((error) => {
+        showError(messageTool, error);
+      })
+  } else {
+    messageTool('不支持地理定位');
+  }
+};
+
+var index = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  getPositionByGeolocation: getPositionByGeolocation
+});
+
+export { index as browserHandler, index$1 as cookieAndStorage, createEncrypter, common$1 as fileHandler, getDateAndWeek, getPdf, nodeFileHandler, off, on, setFontSize, settingFullscreen, common as validator };

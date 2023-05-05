@@ -4,7 +4,7 @@ import JsPDF from 'jspdf'
 /**
  * @description 将指定div元素输出为pdf文件或者base64码
  * @param {string} type 1:下载 2:输出
- * @param {string} title 
+ * @param {string} title
  * @returns {Promise<string> | void}
  */
 export function getPdf(type, title) {
@@ -17,11 +17,11 @@ export function getPdf(type, title) {
     }).then(function (canvas) {
       let contentWidth = canvas.width
       let contentHeight = canvas.height
-      let pageHeight = contentWidth / 592.28 * 841.89
+      let pageHeight = (contentWidth / 592.28) * 841.89
       let leftHeight = contentHeight
       let position = 0
       let imgWidth = 595.28
-      let imgHeight = 592.28 / contentWidth * contentHeight
+      let imgHeight = (592.28 / contentWidth) * contentHeight
       let pageData = canvas.toDataURL('image/jpeg', 1.0)
       let PDF = new JsPDF('', 'pt', 'a4')
       if (leftHeight < pageHeight) {

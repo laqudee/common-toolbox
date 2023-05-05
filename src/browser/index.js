@@ -1,5 +1,3 @@
-import { getPositionByGeolocation } from "./position.js"
+import { getPositionByGeolocation } from './position.js'
 
-export {
-  getPositionByGeolocation
-}
+export { getPositionByGeolocation }

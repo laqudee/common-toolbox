@@ -1,6 +1,6 @@
 /**
  * @description 处理获取到的位置
- * @param {Object} position 
+ * @param {Object} position
  * @returns {Promise<Object>}
  */
 export const showPosition = (position) => {
@@ -17,21 +17,21 @@ export const showPosition = (position) => {
 /**
  * @description 展示定位失败原因
  * @param {Object | Function} messageTool message通知工具，例如ElMessage；Toast；Alert； Message
- * @param {Error | Object} error 
+ * @param {Error | Object} error
  */
 export const showError = (messageTool, error) => {
   switch (error.code) {
     case error.PERMISSION_DENIED:
-      messageTool("定位失败,用户拒绝请求地理定位");
+      messageTool('定位失败,用户拒绝请求地理定位')
       break
     case error.POSITION_UNAVAILABLE:
-      messageTool("定位失败,位置信息是不可用");
+      messageTool('定位失败,位置信息是不可用')
       break
     case error.TIMEOUT:
-      messageTool("定位失败,请求获取用户位置超时");
+      messageTool('定位失败,请求获取用户位置超时')
       break
     case error.UNKNOWN_ERROR:
-      messageTool("定位失败,定位系统失效");
+      messageTool('定位失败,定位系统失效')
       break
   }
 }
@@ -44,18 +44,17 @@ export const showError = (messageTool, error) => {
 export const getPositionByGeolocation = (messageTool) => {
   if (navigator.geolocation) {
     return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject);
+      navigator.geolocation.getCurrentPosition(resolve, reject)
     })
       .then((res) => {
-
         showPosition(res).then((res) => {
           return res
-        });
+        })
       })
       .catch((error) => {
         showError(messageTool, error)
-      });
+      })
   } else {
-    messageTool("不支持地理定位");
+    messageTool('不支持地理定位')
   }
 }
