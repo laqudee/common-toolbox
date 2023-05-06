@@ -36,10 +36,10 @@ export const getList = (params) => {
 
 ### API
 
-| API             | USAGE                                       | REMARK                    |
-| :-------------- | :------------------------------------------ | :------------------------ |
+| API         | USAGE                                | REMARK        |
+| :---------- | :----------------------------------- | :------------ |
 | createAxios | `const axios = createAxios(options)` | 生成axios实例 |
-| ...             | ...                                         | ...                       |
+| ...         | ...                                  | ...           |
 
 ## DOM处理相关API
 
@@ -237,19 +237,27 @@ console.log(date)
 ### Usage
 
 ```js
-import { createEncrypter } from 'common-toolbox'
+import { createEncrypter, encryptHandler } from 'common-toolbox'
 
 // example
 const PUBLIC_KEY = 'PUBLIC_KEY'
 
 export const setRas = createEncrypter(PUBLIC_KEY)
 
+// 通过*加密文本，例如手机号、邮箱
+const encodeMobile = encryptHandler.encryptText('13356789900', 'mobile', '请绑定手机号')
+
+const encodeEmail = encryptHandler.encryptEmail('example@mail.com', '请绑定邮箱')
 ```
 
-| API             | USAGE                                       | REMARK                    |
-| :-------------- | :------------------------------------------ | :------------------------ |
-| createEncrypter | `const setRAS = createEncrypter(publicKey)` | 目前使用JSEncrypt进行加密 |
-| ...             | ...                                         | ...                       |
+| API             | USAGE                                           | REMARK                      |
+| :-------------- | :---------------------------------------------- | :-------------------------- |
+| createEncrypter | `const setRAS = createEncrypter(publicKey)`     | 目前使用JSEncrypt进行加密   |
+| encryptText     | `encodeText = encryptText(text, flag, tipText)` | 通过*对指定文本进行加密     |
+| encryptName     | `encodeName = encryptName(name, tipText)`       | 通过*对指定中文姓名进行加密 |
+| encryptMobile   | `encodeMobile = encryptMobile(mobile, tipText)` | 通过*对指定手机号进行加密   |
+| encryptEmail    | `encodeEmail = encryptEmail(email, tipText)`    | 通过*对指定邮箱进行加密     |
+| ...             | ...                                             | ...                         |
 
 ## 其他API
 
