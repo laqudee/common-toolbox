@@ -227,5 +227,14 @@ const sleepPromise = sleep(50000)
   - ESM
   - CJS
 
+## Examples
+
+```sh
+- examples/vue3-example
+
+# dev
+pnpm dev
+```
+
 ## 补充
 > 进行中...
