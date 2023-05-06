@@ -340,6 +340,88 @@ function createEncrypter(publicKey) {
 }
 
 /**
+ * @description 使用*加密文本
+ * @param {string} text
+ * @param {string} flag name | mobile | email
+ * @param {string} tipText 如果text的值为空或者null，将展示tipText的值
+ * @returns {string}
+ */
+function encryptText(text, flag, tipText) {
+  let result = '';
+  if (flag === 'name') {
+    result = encryptName(text, tipText);
+  }
+  if (flag === 'mobile') {
+    result = encryptMobile(text, tipText);
+  }
+  if (flag === 'email') {
+    result = encryptEmail(text, tipText);
+  }
+
+  return result
+}
+
+/**
+ * @description 使用*加密中文姓名
+ * @param {string} name
+ * @param {string} tipText
+ * @returns {string}
+ */
+function encryptName(name, tipText) {
+  if (!name || name == null) {
+    return tipText || '**'
+  } else {
+    let last = name.slice(1);
+    return `*${last}`
+  }
+}
+
+/**
+ * @description 使用*加密手机号
+ * @param {string} mobile
+ * @param {string} tipText
+ * @returns {string}
+ */
+function encryptMobile(mobile, tipText) {
+  if (!mobile || mobile == null) {
+    return tipText || '暂未绑定手机号'
+  } else {
+    let first = mobile.slice(0, 3);
+    let last = mobile.slice(7);
+    return `${first}****${last}`
+  }
+}
+
+/**
+ * @description 使用*加密email
+ * @param {string} email
+ * @param {string} tipText
+ * @returns {string}
+ */
+function encryptEmail(email, tipText) {
+  if (!email || email == null) {
+    return tipText || '暂未绑定邮箱'
+  } else {
+    const array = email.split('@');
+    if (array[0].length < 3) {
+      return `${array[0]}***@${array[1]}`
+    } else {
+      const first = email.slice(0, 3);
+      return `${first}***@${array[1]}`
+    }
+  }
+}
+
+var index$2 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  createEncrypter: createEncrypter,
+  encryptEmail: encryptEmail,
+  encryptMobile: encryptMobile,
+  encryptName: encryptName,
+  encryptText: encryptText
+});
+
+/**
  * @description 设置休眠时间
  * @param {number} timeout
  * @returns
@@ -962,6 +1044,7 @@ exports.createAxios = createAxios;
 exports.createEncrypter = createEncrypter;
 exports.dateHandler = common$2;
 exports.domHandler = common$3;
+exports.encryptHandler = index$2;
 exports.fileHandler = common$1;
 exports.getPdf = getPdf;
 exports.getType = getType;

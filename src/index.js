@@ -1,7 +1,8 @@
 import { createAxios } from './axios/common.js'
-import { createEncrypter } from './encrypt/common.js'
+import { createEncrypter } from './encrypt/index.js'
 import { sleep, getType } from './tools/common.js'
 import { getPdf } from './files/htmlToPdf.js'
+import * as encryptHandler from './encrypt/index.js'
 import * as domHandler from './dom/common.js'
 import * as dateHandler from './date/common.js'
 import * as fileHandler from './files/common.js'
@@ -16,6 +17,7 @@ export {
   sleep,
   getType,
   getPdf,
+  encryptHandler,
   domHandler,
   dateHandler,
   fileHandler,
