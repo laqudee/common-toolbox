@@ -1,6 +1,6 @@
 {
-  "name": "vue-toolbox-test",
-  "version": "0.0.0",
+  "name": "vue3-example",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "vite",
