@@ -4,6 +4,43 @@
 
 > 目前仅支持前端项目，不支持纯Node.js项目【后续会修复这个问题】
 
+## Axios相关API
+
+### Usage
+
+```js
+import { createAxios } from 'common-toolbox'
+import { getToken } from './token.js'
+import router from '../router/index.js'
+import { ElMessage } from 'element-plus'
+
+// example
+const axios = createAxios({
+  baseURL: '',
+  timeout: 50000,
+  getAccessToken,
+  router,
+  messageTip: ElMessage
+})
+
+export default axios
+
+// use axios
+import axios form './utils/axios.js'
+
+export const getList = (params) => {
+  return axios.post(url, params, config)
+}
+// config可选可配置
+```
+
+### API
+
+| API             | USAGE                                       | REMARK                    |
+| :-------------- | :------------------------------------------ | :------------------------ |
+| createAxios | `const axios = createAxios(options)` | 生成axios实例 |
+| ...             | ...                                         | ...                       |
+
 ## DOM处理相关API
 
 ### Usage
@@ -21,6 +58,8 @@ const play = () => {
 
 // more ...
 ```
+
+### API
 
 | API               | USAGE                           | REMARK                         |
 | :---------------- | :------------------------------ | :----------------------------- |
@@ -48,6 +87,8 @@ const trueOrFalseOfIdCard = validator.isIdCard(userIdCard)
 ### 说明
 
 - 邮箱、手机号、身份证号、中文姓名、密码复杂度等的校验函数返回均为Boolean类型，并没有专门去适配`Element-ui`、`Element-plus`、`Vant`等UI框架，使用时应根据个人需求通过包装下面这些函数实现适配UI框架的校验函数
+
+### API
 
 | API                        | USAGE                                                     | REMARK                                                                      |
 | :------------------------- | :-------------------------------------------------------- | :-------------------------------------------------------------------------- |
@@ -82,6 +123,8 @@ const downloadWord = async () => {
 }
 ```
 
+### API
+
 | API           | USAGE                                       | REMARK                                                 |
 | :------------ | :------------------------------------------ | :----------------------------------------------------- |
 | dataURLtoFile | `const file = dataURLtoFile(url, filename)` | 将URL转为file                                          |
@@ -100,6 +143,8 @@ nodeFileHandler.isFileExist('/path')
 
 nodeFileHandler.getFolderExcludeSome('parentPath', /^example/)
 ```
+
+### API
 
 | API                  | USAGE                                                               | REMARK                                                 |
 | :------------------- | :------------------------------------------------------------------ | :----------------------------------------------------- |
@@ -129,6 +174,8 @@ cs.clearAllCookies()
 cs.clearAllStorage()
 ```
 
+### API
+
 | API                  | USAGE                            | REMARK |
 | :------------------- | :------------------------------- | :----- |
 | getLocalStorage      | `getLocalStorage(key)`           |        |
@@ -154,6 +201,8 @@ import { ElMessage } from 'element-plus'
 browserHandler.getPositionByGeolocation(ElMessage)
 ```
 
+### API
+
 | API                      | USAGE                                                     | REMARK                                                    |
 | :----------------------- | :-------------------------------------------------------- | :-------------------------------------------------------- |
 | getPositionByGeolocation | `getPositionByGeolocation(messageTool): {Promise<Object>` | 获取定位坐标；messageTool参数应传入一个消息弹窗实例或函数 |
@@ -175,6 +224,8 @@ console.log(date)
  * time: '12:45'
  */
 ```
+
+### API
 
 | API            | USAGE                           | REMARK             |
 | :------------- | :------------------------------ | :----------------- |
@@ -216,6 +267,8 @@ const sleepPromise = sleep(50000)
 
 // more ...
 ```
+
+### API
 
 | API     | USAGE                      | REMARK                    |
 | :------ | :------------------------- | :------------------------ |
