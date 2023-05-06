@@ -1,7 +1,7 @@
 import JSEncrypt from 'jsencrypt';
-import dayjs from 'dayjs';
 import html2Canvas from 'html2canvas';
 import JsPDF from 'jspdf';
+import dayjs from 'dayjs';
 import { readdir } from 'fs/promises';
 import { fileURLToPath, URL } from 'node:url';
 import fs from 'node:fs';
@@ -28,23 +28,70 @@ function createEncrypter(publicKey) {
 }
 
 /**
- * @description 获取当前日期、星期数
- * @returns {Object}
+ * @description 设置休眠时间
+ * @param {number} timeout
+ * @returns
  */
-const getDateAndWeek = () => {
-  const date = new Date();
-  const year = dayjs(date).format('YYYY年M月D日');
-  const time = dayjs(date).format('HH:mm');
-  const week = date.getDay();
+async function sleep(timeout) {
+  return new Promise((resolve) => setTimeout(resolve, timeout))
+}
 
-  const weekList = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+/**
+ * @description 获取数据类型
+ * @param {any} value
+ * @return "String","Object","Array"...
+ */
+function getType(value) {
+  return Object.prototype.toString.call(value).slice(8, -1)
+}
 
-  return {
-    date: year,
-    week: weekList[week],
-    time: time
-  }
-};
+/**
+ * @description 将指定div元素输出为pdf文件或者base64码
+ * @param {string} ref div元素className
+ * @param {string} type file:下载 base64:输出
+ * @param {string} title
+ * @returns {Promise<string> | void}
+ */
+function getPdf(ref, type, title) {
+  return new Promise((resolve, reject) => {
+    html2Canvas(document.querySelector(ref), {
+      allowTaint: true,
+      useCORS: true,
+      dpi: window.devicePixelRatio * 4, // 将分辨率提高到特定的DPI 提高四倍
+      scale: 4 // 按比例增加分辨率
+    }).then(function (canvas) {
+      let contentWidth = canvas.width;
+      let contentHeight = canvas.height;
+      let pageHeight = (contentWidth / 592.28) * 841.89;
+      let leftHeight = contentHeight;
+      let position = 0;
+      let imgWidth = 595.28;
+      let imgHeight = (592.28 / contentWidth) * contentHeight;
+      let pageData = canvas.toDataURL('image/jpeg', 1.0);
+      let PDF = new JsPDF('', 'pt', 'a4');
+      if (leftHeight < pageHeight) {
+        PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
+      } else {
+        while (leftHeight > 0) {
+          PDF.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight);
+          leftHeight -= pageHeight;
+          position -= 841.89;
+          if (leftHeight > 0) {
+            PDF.addPage();
+          }
+        }
+      }
+      if (type === 'file') {
+        // 下载
+        PDF.save(title + '.pdf');
+      } else {
+        // 输出pdf的base64码
+        let pdfData = PDF.output('datauristring'); // 获取到base64码
+        resolve(pdfData);
+      }
+    });
+  })
+}
 
 /**
  * @description 以1920底图为基准开发页面
@@ -146,71 +193,37 @@ const off = (function () {
   }
 })();
 
-/**
- * @description 设置休眠时间
- * @param {number} timeout
- * @returns
- */
-async function sleep(timeout) {
-  return new Promise((resolve) => setTimeout(resolve, timeout))
-}
+var common$3 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  off: off,
+  on: on,
+  setFontSize: setFontSize,
+  settingFullscreen: settingFullscreen
+});
 
 /**
- * @description 获取数据类型
- * @param {any} value
- * @return "String","Object","Array"...
+ * @description 获取当前日期、星期数
+ * @returns {Object}
  */
-function getType(value) {
-  return Object.prototype.toString.call(value).slice(8, -1)
-}
+const getDateAndWeek = () => {
+  const date = new Date();
+  const year = dayjs(date).format('YYYY年M月D日');
+  const time = dayjs(date).format('HH:mm');
+  const week = date.getDay();
 
-/**
- * @description 将指定div元素输出为pdf文件或者base64码
- * @param {string} ref div元素className
- * @param {string} type file:下载 base64:输出
- * @param {string} title
- * @returns {Promise<string> | void}
- */
-function getPdf(ref, type, title) {
-  return new Promise((resolve, reject) => {
-    html2Canvas(document.querySelector(ref), {
-      allowTaint: true,
-      useCORS: true,
-      dpi: window.devicePixelRatio * 4, // 将分辨率提高到特定的DPI 提高四倍
-      scale: 4 // 按比例增加分辨率
-    }).then(function (canvas) {
-      let contentWidth = canvas.width;
-      let contentHeight = canvas.height;
-      let pageHeight = (contentWidth / 592.28) * 841.89;
-      let leftHeight = contentHeight;
-      let position = 0;
-      let imgWidth = 595.28;
-      let imgHeight = (592.28 / contentWidth) * contentHeight;
-      let pageData = canvas.toDataURL('image/jpeg', 1.0);
-      let PDF = new JsPDF('', 'pt', 'a4');
-      if (leftHeight < pageHeight) {
-        PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
-      } else {
-        while (leftHeight > 0) {
-          PDF.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight);
-          leftHeight -= pageHeight;
-          position -= 841.89;
-          if (leftHeight > 0) {
-            PDF.addPage();
-          }
-        }
-      }
-      if (type === 'file') {
-        // 下载
-        PDF.save(title + '.pdf');
-      } else {
-        // 输出pdf的base64码
-        let pdfData = PDF.output('datauristring'); // 获取到base64码
-        resolve(pdfData);
-      }
-    });
-  })
-}
+  const weekList = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
+  return {
+    date: year,
+    week: weekList[week],
+    time: time
+  }
+};
+
+var common$2 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  getDateAndWeek: getDateAndWeek
+});
 
 /**
  * @description 将base64转换为文件,接收2个参数，第一是base64，第二个是文件名字
@@ -631,4 +644,4 @@ var index = /*#__PURE__*/Object.freeze({
   getPositionByGeolocation: getPositionByGeolocation
 });
 
-export { index as browserHandler, index$1 as cookieAndStorage, createEncrypter, common$1 as fileHandler, getDateAndWeek, getPdf, getType, nodeFileHandler, off, on, setFontSize, settingFullscreen, sleep, common as validator };
+export { index as browserHandler, index$1 as cookieAndStorage, createEncrypter, common$2 as dateHandler, common$3 as domHandler, common$1 as fileHandler, getPdf, getType, nodeFileHandler, sleep, common as validator };

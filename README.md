@@ -7,14 +7,14 @@
 ### Usage
 
 ```js
-import { setFontSize, settingFullscreen, on, off } from 'common-box'
+import { domHandler } from 'common-box'
 
 // vue main.js
-setFontSize()
+domHandler.setFontSize()
 
 // some page need setting fullscreen
 const play = () => {
-  settingFullscreen()
+  domHandler.settingFullscreen()
 }
 
 // more ...
@@ -80,11 +80,11 @@ const downloadWord = async () => {
 }
 ```
 
-| API                       | USAGE                                       | REMARK                                                 |
-| :------------------------ | :------------------------------------------ | :----------------------------------------------------- |
-| fileHandler.dataURLtoFile | `const file = dataURLtoFile(url, filename)` | 将URL转为file                                          |
-| fileHandler.blobFile      | `blob(url, name, type)`                     | 下载文件，name: 下载存储的文件名；type: 下载的文件类型 |
-| ...                       | ...                                         | ...                                                    |
+| API           | USAGE                                       | REMARK                                                 |
+| :------------ | :------------------------------------------ | :----------------------------------------------------- |
+| dataURLtoFile | `const file = dataURLtoFile(url, filename)` | 将URL转为file                                          |
+| blobFile      | `blob(url, name, type)`                     | 下载文件，name: 下载存储的文件名；type: 下载的文件类型 |
+| ...           | ...                                         | ...                                                    |
 
 ### `nodeFileHandler`
 
@@ -162,10 +162,10 @@ browserHandler.getPositionByGeolocation(ElMessage)
 ### Usage
 
 ```js
-import { getDateAndWeek } from 'common-toolbox'
+import { dateHandler } from 'common-toolbox'
 
 // example
-const date = getDateAndWeek()
+const date = dateHandler.getDateAndWeek()
 console.log(date)
 /**
  * date: '2023年5月1日'
