@@ -250,6 +250,8 @@ const encodeMobile = encryptHandler.encryptText('13356789900', 'mobile', '请绑
 const encodeEmail = encryptHandler.encryptEmail('example@mail.com', '请绑定邮箱')
 ```
 
+### API
+
 | API             | USAGE                                           | REMARK                      |
 | :-------------- | :---------------------------------------------- | :-------------------------- |
 | createEncrypter | `const setRAS = createEncrypter(publicKey)`     | 目前使用JSEncrypt进行加密   |
