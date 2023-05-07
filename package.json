@@ -1,6 +1,6 @@
 {
   "name": "common-toolbox",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Very practical utility library for JavaScript business projects.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
