@@ -12,7 +12,7 @@ export default defineConfig({
     }
   },
   server: {
-    'base': '/',
+    base: '/',
     host: '0.0.0.0',
     port: 7887,
     proxy: {
