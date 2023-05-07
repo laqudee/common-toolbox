@@ -18,6 +18,7 @@ import { ElMessage } from 'element-plus'
 const axios = createAxios({
   baseURL: '',
   timeout: 50000,
+  tokenName: 'token'
   getAccessToken,
   router,
   messageTip: ElMessage

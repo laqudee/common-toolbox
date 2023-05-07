@@ -4,6 +4,8 @@
 import axios from 'axios'
 import { stringify } from 'qs'
 
+// TODO 错误提示不完善
+
 /**
  * @descriptor 需要校验options中的选项
  * @param {string} baseURL
@@ -28,7 +30,7 @@ export function createAxios(options = {}) {
   instance.interceptors.request.use((config) => {
     const token = options.getToken()
 
-    if (token) {
+    if (token && options.tokenName) {
       config.headers[options.tokenName] = token
     }
 
