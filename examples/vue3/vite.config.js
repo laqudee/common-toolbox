@@ -10,5 +10,18 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  server: {
+    'base': '/',
+    host: '0.0.0.0',
+    port: 7887,
+    proxy: {
+      '/api': {
+        target: 'https://devapi.qweather.com',
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   }
 })

@@ -8,6 +8,7 @@ import { stringify } from 'qs'
  * @descriptor 需要校验options中的选项
  * @param {string} baseURL
  * @param {number} timeout
+ * @param {string} token
  * @param {function} getToken
  * @param {RouterType} router
  * @param {Message | ElMessage} messageTip
@@ -27,7 +28,7 @@ export function createAxios(options = {}) {
     const token = options.getToken()
 
     if (token) {
-      config.headers.accessToken = token
+      config.headers[token] = token
     }
 
     if (
