@@ -11,8 +11,8 @@ dependencies:
     specifier: ^1.4.0
     version: 1.4.0
   common-toolbox:
-    specifier: ^0.0.7
-    version: 0.0.7
+    specifier: ^0.0.8
+    version: 0.0.8
   element-plus:
     specifier: ^2.2.32
     version: 2.2.32(vue@3.2.47)
@@ -823,8 +823,8 @@ packages:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
     dev: true
 
-  /common-toolbox@0.0.7:
-    resolution: {integrity: sha512-MGTaopVRQ/hu+RwvpCLeWAtYLb4KLv+Ycr0VfD2DBiJxF+c3ErZ1WIMJiWbmhfKdKUw3veiVAoZcAb8j+BMPMw==}
+  /common-toolbox@0.0.8:
+    resolution: {integrity: sha512-tl1v4nC7dPDEzdrxwrGrR0dkIZo/NAUw3XwLOiuFsWHoaIjNU5L4UiHnNUrYeUnSksSqvL/QzEgmyFw53BC1fw==}
     dependencies:
       axios: 1.4.0
       dayjs: 1.11.7
