@@ -14,6 +14,13 @@ import { getToken } from './token.js'
 import router from '../router/index.js'
 import { ElMessage } from 'element-plus'
 
+// messageTip可以自己进行封装
+// 例如
+const messageTip = ({type, message}) => {
+  alert(message)
+  console.log('type: ', type)
+}
+
 // example
 const axios = createAxios({
   baseURL: '',
