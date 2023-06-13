@@ -6,17 +6,18 @@ var JSEncrypt = require('jsencrypt');
 var html2Canvas = require('html2canvas');
 var JsPDF = require('jspdf');
 var dayjs = require('dayjs');
-var promises = require('fs/promises');
-var node_url = require('node:url');
-var fs = require('node:fs');
 var Cookies = require('js-cookie');
 
 /* eslint-disable no-undef */
+
+// TODO 错误提示不完善
 
 /**
  * @descriptor 需要校验options中的选项
  * @param {string} baseURL
  * @param {number} timeout
+ * @param {string} tokenName
+ * @param {string} token
  * @param {function} getToken
  * @param {RouterType} router
  * @param {Message | ElMessage} messageTip
@@ -35,8 +36,8 @@ function createAxios(options = {}) {
   instance.interceptors.request.use((config) => {
     const token = options.getToken();
 
-    if (token) {
-      config.headers.accessToken = token;
+    if (token && options.tokenName) {
+      config.headers[options.tokenName] = token;
     }
 
     if (
@@ -440,6 +441,58 @@ function getType(value) {
 }
 
 /**
+ * @description 绑定事件 on(element, event, handler)
+ */
+const on$1 = (function () {
+  if (document.addEventListener) {
+    return function (element, event, handler) {
+      if (element && event && handler) {
+        element.addEventListener(event, handler, false);
+      }
+    }
+  } else {
+    return function (element, event, handler) {
+      if (element && event && handler) {
+        element.attachEvent('on' + event, handler);
+      }
+    }
+  }
+})();
+
+/**
+ * @description 设置全屏与关闭全屏
+ */
+const settingFullscreen$1 = () => {
+  // 判断是否全屏，全屏则退出，非全屏则全屏
+  if (
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement
+  ) {
+    if (document.cancelFullScreen) {
+      document.cancelFullScreen();
+    } else if (document.webkitCancelFullScreen) {
+      document.webkitCancelFullScreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.msCancelFullScreen) {
+      document.msCancelFullScreen();
+    }
+  } else {
+    document
+      .querySelector('html')
+      .requestFullscreen()
+      .then(() => {
+        // 进入全屏成功
+      })
+      .catch(() => {
+        // 进入全屏失败
+      });
+  }
+};
+
+/**
  * @description 将指定div元素输出为pdf文件或者base64码
  * @param {string} ref div元素className
  * @param {string} type file:下载 base64:输出
@@ -660,67 +713,25 @@ const blobFile = (url, name, type) => {
   window.URL.revokeObjectURL(href); // 释放掉blob对象
 };
 
+/**
+ * @description 下载项目内文件到本地
+ * @param {String} url
+ */
+const localFile = (url) => {
+  let downloadElement = document.createElement('a');
+  let href = url;
+  downloadElement.href = href;
+  document.body.appendChild(downloadElement);
+  downloadElement.click();
+  document.body.removeChild(downloadElement);
+  window.URL.revokeObjectURL(href);
+};
+
 var common$1 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   blobFile: blobFile,
-  dataURLtoFile: dataURLtoFile
-});
-
-/**
- * @description 判断文件是否存在
- * @param {string | path} path
- * @returns {boolean}
- */
-const isFileExist = (path) => {
-  if (fs.existsSync(path)) {
-    return true
-  } else {
-    return false
-  }
-};
-
-/**
- * @description 获取parentPath下的除了excludeRegex正则表达式包含的目录
- * @param {string} parentPath
- * @param {RegExp} excludeRegex
- * @returns {Promise<string[]>}
- */
-const getFolderExcludeSome = async (parentPath, excludeRegex) => {
-  try {
-    const folders = await promises.readdir(node_url.fileURLToPath(new node_url.URL(parentPath, (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (document.currentScript && document.currentScript.src || new URL('index.js', document.baseURI).href)))));
-    let resultFolders = [];
-    folders.forEach((folder) => {
-      if (!excludeRegex.test(folder)) {
-        resultFolders.push(folder);
-      }
-    });
-    return resultFolders
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-/**
- * @description 判断参数name的目录是否存在
- * @param {string} parentPath
- * @param {RegExp} excludeRegex
- * @param {string} name
- * @returns {boolean}
- */
-const hasFolder = async (parentPath, excludeRegex, name) => {
-  let projectList = [];
-  if (projectList.length === 0) {
-    projectList = await getFolderExcludeSome(parentPath, excludeRegex);
-  }
-  if (projectList.includes(name)) return true
-  return false
-};
-
-var nodeFileHandler = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  getFolderExcludeSome: getFolderExcludeSome,
-  hasFolder: hasFolder,
-  isFileExist: isFileExist
+  dataURLtoFile: dataURLtoFile,
+  localFile: localFile
 });
 
 /**
@@ -1048,6 +1059,7 @@ exports.encryptHandler = index$2;
 exports.fileHandler = common$1;
 exports.getPdf = getPdf;
 exports.getType = getType;
-exports.nodeFileHandler = nodeFileHandler;
+exports.on = on$1;
+exports.settingFullscreen = settingFullscreen$1;
 exports.sleep = sleep;
 exports.validator = common;

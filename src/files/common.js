@@ -38,3 +38,17 @@ export const blobFile = (url, name, type) => {
   document.body.removeChild(downloadElement) // 下载完成移除元素
   window.URL.revokeObjectURL(href) // 释放掉blob对象
 }
+
+/**
+ * @description 下载项目内文件到本地
+ * @param {String} url
+ */
+export const localFile = (url) => {
+  let downloadElement = document.createElement('a')
+  let href = url
+  downloadElement.href = href
+  document.body.appendChild(downloadElement)
+  downloadElement.click()
+  document.body.removeChild(downloadElement)
+  window.URL.revokeObjectURL(href)
+}
